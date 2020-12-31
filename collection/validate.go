@@ -1,7 +1,6 @@
 package collection
 
 import (
-	"errors"
 	"reflect"
 	"strings"
 )
@@ -16,7 +15,7 @@ func IsStruct(doc interface{}) (bool, error) {
 	}
 
 	if v.Elem().Kind() != reflect.Struct {
-		return false, errors.New("document is not a struct")
+		return false, ErrNotStruct
 	}
 	return true, nil
 }
@@ -28,7 +27,7 @@ func IsSlice(data interface{}) (bool, error) {
 
 	if v.Elem().Kind() == reflect.Slice {
 		if v.Elem().Type().Elem().Kind() != reflect.Struct {
-			return false, errors.New("collection is not a slice of structs")
+			return false, ErrNotSliceOfStructs
 		}
 	}
 
@@ -38,7 +37,7 @@ func IsSlice(data interface{}) (bool, error) {
 func isPtr(v reflect.Value) error {
 
 	if v.Kind() != reflect.Ptr {
-		return errors.New("expected ptr to slice")
+		return ErrExpctdPtrToSlice
 	}
 	return nil
 }
@@ -80,31 +79,3 @@ func requiredFields(doc interface{}) (string, string, error) {
 
 	return id, rev, nil
 }
-
-// func requiredFields(v reflect.Value) (string, string, error) {
-// 	var id string
-// 	var rev string
-
-// 	for i := 0; i < v.NumField(); i++ {
-
-// 		var str string
-// 		var exists bool
-
-// 		str, exists = v.Type().Field(i).Tag.Lookup("json")
-// 		if !exists {
-// 			str, exists = v.Type().Field(i).Tag.Lookup("bson")
-// 		}
-// 		if exists {
-
-// 			if strings.HasPrefix(str, "_id") && v.Field(i).Kind() == reflect.String {
-// 				id = v.Field(i).Interface().(string)
-// 			}
-
-// 			if strings.HasPrefix(str, "_rev") && v.Field(i).Kind() == reflect.String {
-// 				rev = v.Field(i).Interface().(string)
-// 			}
-// 		}
-// 	}
-
-// 	return id, rev, nil
-// }

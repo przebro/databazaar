@@ -14,5 +14,11 @@ type DataCollection interface {
 	Update(ctx context.Context, doc interface{}) error
 	Delete(ctx context.Context, doc interface{}) error
 	CreateMany(ctx context.Context, docs []interface{}) ([]result.BazaarResult, error)
+	AsQuerable() (QuerableCollection, error)
+}
+
+//QuerableCollection - Collection which allows performing select queries
+type QuerableCollection interface {
+	DataCollection
 	Select(ctx context.Context, s selector.Expr, fld selector.Fields) (BazaarCursor, error)
 }
