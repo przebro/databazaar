@@ -15,8 +15,8 @@ type TestDocument struct {
 	Oscars bool    `json:"oscars"`
 }
 
-func GetSingleRecord() (TestDocument, []TestDocument) {
-	b, err := ioutil.ReadFile("../../data/testdata.json")
+func GetSingleRecord(path string) (TestDocument, []TestDocument) {
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Println(err)
 	}
