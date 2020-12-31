@@ -1,0 +1,13 @@
+openssl genrsa -des3 -out root_ca.key 4096 // key for ca certifikate
+openssl req -x509 -new -nodes -key root_ca.key -sha256 -days 1024 -out root_ca.crt // self signed ca certificate
+
+server certificate
+openssl genrsa -out overseer.key 2048 //key for certificate
+openssl req -new -key overseer.key -out overseer.csr // signing request
+openssl req -new -sha256 -key mydomain.com.key -subj "/C=US/ST=CA/O=MyOrg, Inc./CN=mydomain.com" -out mydomain.com.csr // one liner
+openssl req -in overseer.csr -noout -text // verify request
+openssl x509 -req -in overseer.csr -CA root_ca.crt -CAkey root_ca.key -CAcreateserial -out overseer.crt -days 500 -sha256
+client certificate:
+openssl genrsa -out client.key 2048
+openssl req -new -key client.key -out client.req
+openssl x509 -req -in client.req -CA root_ca.crt -CAkey root_ca.key -set_serial 101010 -extensions client -days 500 -out client.cer
