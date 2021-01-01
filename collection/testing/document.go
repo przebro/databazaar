@@ -2,7 +2,6 @@ package collection
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 )
 
@@ -18,7 +17,7 @@ type TestDocument struct {
 func GetSingleRecord(path string) (TestDocument, []TestDocument) {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	tfile := struct {
@@ -27,9 +26,6 @@ func GetSingleRecord(path string) (TestDocument, []TestDocument) {
 	}{}
 
 	err = json.Unmarshal(b, &tfile)
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	return tfile.Single, tfile.Collection
 }
