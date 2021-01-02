@@ -19,19 +19,21 @@ type ConnectionOptions struct {
 
 //Common options for all drivers
 const (
-	UsernameOption = "username"
-	PasswordOption = "password"
-	RootCACertPath = "cacert"
+	UsernameOption   = "username"
+	PasswordOption   = "password"
+	RootCACertOption = "cacert"
+	ClientCertOption = "clientcert"
+	ClientKeyOption  = "clientkey"
+	UntrustedOption  = "untrusted"
 )
 
 var (
-	errOptInvalidFormat  error = errors.New("invalid connection string format")
-	errOptMissingDriver  error = errors.New("invalid connection string; missing driver name")
-	errOptInvalidHost    error = errors.New("invalid connection string; invalid host:port format")
-	errOptMissingHost    error = errors.New("invalid connection string format; missing host")
-	errOptInvalidPort    error = errors.New("invalid connection string format; invalid port")
-	errOptEmptyString    error = errors.New("empty connection string")
-	erroOptInvalidOption error
+	errOptInvalidFormat error = errors.New("invalid connection string format")
+	errOptMissingDriver error = errors.New("invalid connection string; missing driver name")
+	errOptInvalidHost   error = errors.New("invalid connection string; invalid host:port format")
+	errOptMissingHost   error = errors.New("invalid connection string format; missing host")
+	errOptInvalidPort   error = errors.New("invalid connection string format; invalid port")
+	errOptEmptyString   error = errors.New("empty connection string")
 )
 
 //BuildOptions - parses connection string and builds options
@@ -80,7 +82,6 @@ func BuildOptions(connectionString string) (ConnectionOptions, error) {
 	if len(sopts) == 2 {
 
 		sopts = strings.SplitN(sopts[1], "?", 2)
-
 		path = sopts[0]
 
 	}
