@@ -21,19 +21,25 @@ type ConnectionOptions struct {
 const (
 	UsernameOption = "username"
 	PasswordOption = "password"
+	RootCACertPath = "cacert"
 )
 
 var (
 	errOptInvalidFormat  error = errors.New("invalid connection string format")
 	errOptMissingDriver  error = errors.New("invalid connection string; missing driver name")
-	errOptInvalidHost    error = errors.New("invalid connection string; invalid host address")
+	errOptInvalidHost    error = errors.New("invalid connection string; invalid host:port format")
 	errOptMissingHost    error = errors.New("invalid connection string format; missing host")
 	errOptInvalidPort    error = errors.New("invalid connection string format; invalid port")
+	errOptEmptyString    error = errors.New("empty connection string")
 	erroOptInvalidOption error
 )
 
 //BuildOptions - parses connection string and builds options
 func BuildOptions(connectionString string) (ConnectionOptions, error) {
+
+	if connectionString == "" {
+		return ConnectionOptions{}, errOptEmptyString
+	}
 
 	sopts := strings.SplitN(connectionString, ";", 2)
 
@@ -46,25 +52,38 @@ func BuildOptions(connectionString string) (ConnectionOptions, error) {
 	driver := sopts[0]
 	sopts = strings.SplitN(sopts[1], "/", 2)
 
-	host, strport, err := net.SplitHostPort(sopts[0])
+	var host, strport string
+	var port int
+	var path string
+	var err error
 
-	if err != nil {
-		return ConnectionOptions{}, errOptInvalidHost
+	if sopts[0] != "" {
+
+		host, strport, err = net.SplitHostPort(sopts[0])
+
+		if err != nil {
+			return ConnectionOptions{}, errOptInvalidHost
+		}
+
+		if host == "" {
+			return ConnectionOptions{}, errOptMissingHost
+		}
+
+		port, err = strconv.Atoi(strport)
+		if err != nil || port < 0 || port > 65535 {
+			return ConnectionOptions{}, errOptInvalidPort
+		}
 	}
 
-	if host == "" {
-		return ConnectionOptions{}, errOptMissingHost
+	var options = map[string]string{}
+
+	if len(sopts) == 2 {
+
+		sopts = strings.SplitN(sopts[1], "?", 2)
+
+		path = sopts[0]
+
 	}
-
-	port, err := strconv.Atoi(strport)
-	if err != nil || port < 0 || port > 65535 {
-		return ConnectionOptions{}, errOptInvalidPort
-	}
-
-	sopts = strings.SplitN(sopts[1], "?", 2)
-
-	path := sopts[0]
-	options := map[string]string{}
 
 	if len(sopts) == 2 {
 
@@ -72,16 +91,12 @@ func BuildOptions(connectionString string) (ConnectionOptions, error) {
 		for _, opt := range kvlist {
 			kv := strings.SplitN(opt, "=", 2)
 			if len(kv) != 2 {
-				erroOptInvalidOption = fmt.Errorf("invalid connection string;invalid option:%s", opt)
-				return ConnectionOptions{}, erroOptInvalidOption
-
+				return ConnectionOptions{}, fmt.Errorf("invalid connection string;invalid option:%s", opt)
 			}
 			if kv[0] == "" || kv[1] == "" {
-				erroOptInvalidOption = fmt.Errorf("invalid connection string;invalid option:%s", opt)
-				return ConnectionOptions{}, erroOptInvalidOption
+				return ConnectionOptions{}, fmt.Errorf("invalid connection string;invalid option:%s", opt)
 			}
 			options[kv[0]] = kv[1]
-
 		}
 	}
 
