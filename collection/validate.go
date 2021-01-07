@@ -9,12 +9,9 @@ import (
 func IsStruct(doc interface{}) (bool, error) {
 
 	v := reflect.ValueOf(doc)
-	err := isPtr(v)
-	if err != nil {
-		return false, err
-	}
+	isptr := isPtr(v)
 
-	if v.Elem().Kind() != reflect.Struct {
+	if (isptr && v.Elem().Kind() != reflect.Struct) || (!isptr && v.Kind() != reflect.Struct) {
 		return false, ErrNotStruct
 	}
 	return true, nil
@@ -34,12 +31,12 @@ func IsSlice(data interface{}) (bool, error) {
 	return true, nil
 }
 
-func isPtr(v reflect.Value) error {
+func isPtr(v reflect.Value) bool {
 
 	if v.Kind() != reflect.Ptr {
-		return ErrExpctdPtrToSlice
+		return false
 	}
-	return nil
+	return true
 }
 
 //RequiredFields - Check if document is a struct and contains required fields
@@ -60,7 +57,10 @@ func requiredFields(doc interface{}) (string, string, error) {
 	var id string
 	var rev string
 
-	v := reflect.ValueOf(doc).Elem()
+	v := reflect.ValueOf(doc)
+	if ok := isPtr(v); ok {
+		v = v.Elem()
+	}
 
 	for i := 0; i < v.NumField(); i++ {
 
