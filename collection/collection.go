@@ -14,6 +14,7 @@ type DataCollection interface {
 	Update(ctx context.Context, doc interface{}) error
 	Delete(ctx context.Context, id string) error
 	CreateMany(ctx context.Context, docs []interface{}) ([]result.BazaarResult, error)
+	All(ctx context.Context) (BazaarCursor, error)
 	AsQuerable() (QuerableCollection, error)
 }
 
