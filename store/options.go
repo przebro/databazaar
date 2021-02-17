@@ -25,6 +25,7 @@ const (
 	ClientCertOption = "clientcert"
 	ClientKeyOption  = "clientkey"
 	UntrustedOption  = "untrusted"
+	HostnameOption   = "host"
 )
 
 var (

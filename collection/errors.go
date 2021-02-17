@@ -13,4 +13,6 @@ var (
 
 	//ErrNotStruct - not a struct
 	ErrNotStruct = errors.New("document is not a struct")
+	//ErrNoDocuments - get returns empty result
+	ErrNoDocuments = errors.New("no documents in result")
 )

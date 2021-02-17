@@ -15,6 +15,7 @@ type DataCollection interface {
 	Delete(ctx context.Context, id string) error
 	CreateMany(ctx context.Context, docs []interface{}) ([]result.BazaarResult, error)
 	All(ctx context.Context) (BazaarCursor, error)
+	Count(ctx context.Context) (int64, error)
 	AsQuerable() (QuerableCollection, error)
 }
 
