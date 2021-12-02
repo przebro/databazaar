@@ -7,6 +7,11 @@ import (
 	"github.com/przebro/databazaar/selector"
 )
 
+type BazaarDocument interface {
+	ID() string
+	Revision() string
+}
+
 //DataCollection - Common interface for database operations
 type DataCollection interface {
 	Create(ctx context.Context, document interface{}) (*result.BazaarResult, error)

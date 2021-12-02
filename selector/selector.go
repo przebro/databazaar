@@ -42,11 +42,24 @@ type (
 	Empty string
 )
 
+const (
+	EqOperator  = "$eq"
+	NeOperator  = "$ne"
+	LtOperator  = "$lt"
+	LteOperator = "$lte"
+	GtOperator  = "$gt"
+	GteOperator = "$gte"
+	AndOperator = "$and"
+	OrOperator  = "$or"
+	NorOperator = "$nor"
+	NotOperator = "$not"
+)
+
 func (e Int) Expand(f Formatter) string    { return fmt.Sprintf(`%d`, e) }
 func (e String) Expand(f Formatter) string { return fmt.Sprintf(`"%s"`, e) }
 func (e Bool) Expand(f Formatter) string   { return fmt.Sprintf(`%t`, e) }
 func (e Float) Expand(f Formatter) string  { return fmt.Sprintf(`%f`, e) }
-func (e Null) Expand(f Formatter) string   { return fmt.Sprintf(`null`, e) }
+func (e Null) Expand(f Formatter) string   { return `null` }
 func (e Empty) Expand(f Formatter) string  { return `{}` }
 
 //CmpExpr - Base expression for comparison operators
@@ -58,12 +71,12 @@ type CmpExpr struct {
 
 func (e CmpExpr) Expand(f Formatter) string { return f.Format(e.Field, e.Op, e.Ex.Expand(f)) }
 
-func Eq(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: "$eq"} }
-func Ne(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: "$ne"} }
-func Lt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: "$lt"} }
-func Lte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: "$lte"} }
-func Gt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: "$gt"} }
-func Gte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: "$gte"} }
+func Eq(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: EqOperator} }
+func Ne(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: NeOperator} }
+func Lt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: LtOperator} }
+func Lte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: LteOperator} }
+func Gt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: GtOperator} }
+func Gte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: GteOperator} }
 
 //LogExpr - Base expression for logical operators
 type LogExpr struct {
@@ -77,7 +90,7 @@ func And(exprA Expr, expr ...Expr) Expr {
 	e = append(e, exprA)
 	e = append(e, expr...)
 
-	return &LogExpr{Ex: e, Op: "$and"}
+	return &LogExpr{Ex: e, Op: AndOperator}
 }
 func Or(exprA Expr, expr ...Expr) Expr {
 
@@ -85,7 +98,7 @@ func Or(exprA Expr, expr ...Expr) Expr {
 	e = append(e, exprA)
 	e = append(e, expr...)
 
-	return &LogExpr{Ex: e, Op: "$or"}
+	return &LogExpr{Ex: e, Op: OrOperator}
 }
 func Nor(exprA Expr, expr ...Expr) Expr {
 
@@ -93,7 +106,7 @@ func Nor(exprA Expr, expr ...Expr) Expr {
 	e = append(e, exprA)
 	e = append(e, expr...)
 
-	return &LogExpr{Ex: e, Op: "$nor"}
+	return &LogExpr{Ex: e, Op: NorOperator}
 }
 func Not(exprA Expr, expr ...Expr) Expr {
 
@@ -101,7 +114,7 @@ func Not(exprA Expr, expr ...Expr) Expr {
 	e = append(e, exprA)
 	e = append(e, expr...)
 
-	return &LogExpr{Ex: e, Op: "$not"}
+	return &LogExpr{Ex: e, Op: NotOperator}
 }
 
 func (e LogExpr) Expand(f Formatter) string {
