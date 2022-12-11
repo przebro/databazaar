@@ -12,6 +12,7 @@ type TestDocument struct {
 	Score  float32 `json:"score"`
 	Year   int     `json:"year"`
 	Oscars bool    `json:"oscars"`
+	Genre  string  `json:"genre"`
 }
 
 func GetSingleRecord(path string) (TestDocument, []TestDocument) {
