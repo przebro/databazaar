@@ -4,16 +4,17 @@ import (
 	"fmt"
 )
 
-//Fields - Custom type
+// Fields - Custom type
 type Fields []string
 
-//Formatter - Helps create a query for specific databases by implementing a Visitor pattern.
+// Formatter - Helps create a query for specific databases by implementing a Visitor pattern.
 type Formatter interface {
 	Format(fld, op, val string) string
 	FormatArray(op string, val ...string) string
 }
 
-/*DataSelectorBuilder - Builds a 'where' like clause to restricts results returned by query.
+/*
+DataSelectorBuilder - Builds a 'where' like clause to restricts results returned by query.
 Specific drivers should implement this interface.
 */
 type DataSelectorBuilder interface {
@@ -35,7 +36,7 @@ type (
 	//Bool  Custom type that implements the Expr interface
 	Bool bool
 	//Float  Custom type that implements the Expr interface
-	Float float32
+	Float float64
 	//Null - Custom type that implements the Expr interface
 	Null string
 	//Empty - Custom type, empty selector
@@ -62,7 +63,7 @@ func (e Float) Expand(f Formatter) string  { return fmt.Sprintf(`%f`, e) }
 func (e Null) Expand(f Formatter) string   { return `null` }
 func (e Empty) Expand(f Formatter) string  { return `{}` }
 
-//CmpExpr - Base expression for comparison operators
+// CmpExpr - Base expression for comparison operators
 type CmpExpr struct {
 	Field string
 	Op    string
@@ -78,7 +79,7 @@ func Lte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op:
 func Gt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: GtOperator} }
 func Gte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: GteOperator} }
 
-//LogExpr - Base expression for logical operators
+// LogExpr - Base expression for logical operators
 type LogExpr struct {
 	Ex []Expr
 	Op string
