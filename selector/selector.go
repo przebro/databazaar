@@ -54,6 +54,7 @@ const (
 	OrOperator  = "$or"
 	NorOperator = "$nor"
 	NotOperator = "$not"
+	prefixWith  = "$prefix"
 )
 
 func (e Int) Expand(f Formatter) string    { return fmt.Sprintf(`%d`, e) }
@@ -72,12 +73,13 @@ type CmpExpr struct {
 
 func (e CmpExpr) Expand(f Formatter) string { return f.Format(e.Field, e.Op, e.Ex.Expand(f)) }
 
-func Eq(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: EqOperator} }
-func Ne(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: NeOperator} }
-func Lt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: LtOperator} }
-func Lte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: LteOperator} }
-func Gt(fld string, expr Expr) Expr  { return &CmpExpr{Field: fld, Ex: expr, Op: GtOperator} }
-func Gte(fld string, expr Expr) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: GteOperator} }
+func Eq(fld string, expr Expr) Expr       { return &CmpExpr{Field: fld, Ex: expr, Op: EqOperator} }
+func Ne(fld string, expr Expr) Expr       { return &CmpExpr{Field: fld, Ex: expr, Op: NeOperator} }
+func Lt(fld string, expr Expr) Expr       { return &CmpExpr{Field: fld, Ex: expr, Op: LtOperator} }
+func Lte(fld string, expr Expr) Expr      { return &CmpExpr{Field: fld, Ex: expr, Op: LteOperator} }
+func Gt(fld string, expr Expr) Expr       { return &CmpExpr{Field: fld, Ex: expr, Op: GtOperator} }
+func Gte(fld string, expr Expr) Expr      { return &CmpExpr{Field: fld, Ex: expr, Op: GteOperator} }
+func Prefix(fld string, expr String) Expr { return &CmpExpr{Field: fld, Ex: expr, Op: prefixWith} }
 
 // LogExpr - Base expression for logical operators
 type LogExpr struct {

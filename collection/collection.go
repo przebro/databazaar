@@ -12,7 +12,7 @@ type BazaarDocument interface {
 	Revision() string
 }
 
-//DataCollection - Common interface for database operations
+// DataCollection - Common interface for database operations
 type DataCollection interface {
 	Create(ctx context.Context, document interface{}) (*result.BazaarResult, error)
 	Get(ctx context.Context, id string, result interface{}) error
@@ -23,9 +23,10 @@ type DataCollection interface {
 	All(ctx context.Context) (BazaarCursor, error)
 	Count(ctx context.Context) (int64, error)
 	AsQuerable() (QuerableCollection, error)
+	Type() string
 }
 
-//QuerableCollection - Collection which allows performing select queries
+// QuerableCollection - Collection which allows performing select queries
 type QuerableCollection interface {
 	DataCollection
 	Select(ctx context.Context, s selector.Expr, fld selector.Fields) (BazaarCursor, error)
